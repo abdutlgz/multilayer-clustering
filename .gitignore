@@ -7,3 +7,7 @@ __pycache__/
 # Simulation reruns and cluster logs (results used in the paper are in simulations/results)
 simulations/output/
 simulations/*/logs/*.out
+
+# MovieLens data and real-data reruns (results used in the paper are in realworldexample/results)
+realworldexample/data/
+realworldexample/output/
