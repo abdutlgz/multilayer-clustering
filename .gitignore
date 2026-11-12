@@ -1,0 +1,9 @@
+# MATLAB, Python and OS files
+*.asv
+*.mat
+__pycache__/
+.DS_Store
+
+# Simulation reruns and cluster logs (results used in the paper are in simulations/results)
+simulations/output/
+simulations/*/logs/*.out

@@ -15,8 +15,8 @@ realworldexample/
   MovieLens real-data runners, helpers, paper summary, and selected outputs.
 
 simulations/
-  Controlled simulation pipeline for validating the method under known signal
-  and layer-width regimes.
+  Simulation study of the paper (Section 4): code, the results used in the
+  paper, and the scripts that make its tables and figures.
 ```
 
 The most important documentation files are:
@@ -24,7 +24,7 @@ The most important documentation files are:
 ```text
 realworldexample/SUMMARY.md
 realworldexample/README_movielens_experiment.md
-simulations/README_SIMULATION_PIPELINE.txt
+simulations/README.md
 ```
 
 Read `realworldexample/SUMMARY.md` first if you want the paper-facing story:
@@ -109,25 +109,18 @@ Best baseline:   proposed split/subspace vs all-layer spectral clustering
 
 ## Simulation Experiments
 
-The controlled simulations are in `simulations/`. They test the method under
-known signal and layer-width regimes.
+The simulation study (Section 4 of the paper) is in `simulations/`. See
+`simulations/README.md` for which file makes each table and figure, how to
+rebuild them from the stored results in a few seconds, how to check the code on
+a laptop, and how to rerun the full study on a Slurm cluster.
 
-Typical workflow:
+Quick start:
 
-```matlab
-STEP1_single_case_beta_sweep
-STEP2_build_oracle_delta_table
-STEP3_fit_delta_rule_and_compare
-STEP4_make_paper_figures
+```bash
+cd simulations/figures
+python3 make_figures.py    # Figures 1-4 of Section 4
+python3 make_tables.py     # Tables 1-2 of Section 4
 ```
-
-See:
-
-```text
-simulations/README_SIMULATION_PIPELINE.txt
-```
-
-for the detailed simulation pipeline.
 
 ## Data Policy
 
@@ -153,5 +146,5 @@ folders.
 
 1. `realworldexample/SUMMARY.md`
 2. `realworldexample/README_movielens_experiment.md`
-3. `simulations/README_SIMULATION_PIPELINE.txt`
+3. `simulations/README.md`
 
