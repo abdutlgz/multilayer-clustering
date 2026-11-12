@@ -1,38 +1,102 @@
-# Multilayer Network Clustering Experiments
+# Clustering the layers of a multilayer network
 
-Code and results for the experiments of the paper on clustering the layers of a multilayer network
-and classifying the non-active layers (Algorithm 1). Each layer is a rectangular matrix
-A^(l) of size n × n_l: all layers share the same n row nodes, and each has its own columns.
+This repository has the code and results for every figure and table in our paper on grouping the layers of a multilayer network. Everything in the paper can be rebuilt from this repository.
 
-## Repository structure
+## The idea in plain words
 
-```text
-simulations/
-  Simulation study (Section 4): MATLAB code, the results used in the paper,
-  and the scripts that make its tables and figures.
+A **multilayer network** is a collection of networks, called **layers**, that share the same set of nodes. For example:
 
-realworldexample/
-  Real-data example on MovieLens 25M (Section 5): Python code, the results
-  used in the paper, and the scripts that make its table, figures and numbers.
+- the nodes are 5,000 movie viewers;
+- each layer is a set of movies, and it records which viewers rated which movies.
+
+All layers have the same viewers, but each layer has its own movies, and some layers have many more movies than others.
+
+**The goal** is to put the layers into groups, so that layers in the same group are "used" by similar viewers. For example, layers of action movies should end up together, and layers of romantic comedies together.
+
+**The difficulty** is that many layers are small. A small layer has too little data to be grouped reliably on its own.
+
+**Our method (Algorithm 1)** handles this in two stages:
+
+1. **Group the large layers.** A layer is called *active* if it has enough data (the rule is in Section 4 of the paper). Only the active layers are grouped.
+2. **Assign the small layers.** For each group, the active layers are combined to describe what the group looks like. Each small (non-active) layer then joins the group it resembles most.
+
+We compare it with two methods that group all layers at once: **all-layer spectral clustering** and a **UASE-based method**.
+
+## What is in this repository
+
+| Folder | Paper section | Language | What it shows |
+|---|---|---|---|
+| [`simulations/`](simulations/) | Section 4 | MATLAB (figures in Python) | Simulated networks where the true groups are known: how accurate and how fast the methods are |
+| [`realworldexample/`](realworldexample/) | Section 5 | Python | Real data from MovieLens: the method finds genre groups such as Action / Adventure / Sci-Fi versus Comedy / Drama / Romance |
+
+Each folder has its own README with the details: what every file does, the exact settings and seeds, and how to rerun everything.
+
+### Where each figure and table comes from
+
+| In the paper | Image file | Made by |
+|---|---|---|
+| Figure 1 | `simulations/results/figures/sim_threshold_curves.pdf` | `simulations/figures/make_figures.py` |
+| Figure 2 | `simulations/results/figures/sim_error_by_n_L_rho.pdf` | `simulations/figures/make_figures.py` |
+| Figure 3 | `simulations/results/figures/sim_runtime_memory.pdf` | `simulations/figures/make_figures.py` |
+| Figure 4 | `simulations/results/figures/sim_active_sweep.pdf` | `simulations/figures/make_figures.py` |
+| Tables 1 and 2 | printed on screen | `simulations/figures/make_tables.py` |
+| Figure 5 | `realworldexample/results/figures/movielens_genre_split_Nov9.pdf` | `realworldexample/figures/make_figures.py` |
+| Figure 6 | `realworldexample/results/figures/movielens_layer_groups.pdf` | `realworldexample/figures/make_figures.py` |
+| Figure 7 | `realworldexample/results/figures/movielens_small_layers_Nov10.pdf` | `realworldexample/figures/make_figures.py` |
+| Table 3 and the numbers in Section 5 | printed on screen | `realworldexample/figures/make_tables.py` |
+
+## How to reproduce the paper
+
+There are three levels, from fastest to slowest. Most readers need only the first or second.
+
+### Level 1: look at the results (no installation)
+
+The figures used in the paper are already in `simulations/results/figures/` and `realworldexample/results/figures/`. The numbers behind them are in the CSV and JSON files next to them.
+
+### Level 2: rebuild the figures and tables (a few seconds)
+
+You need Python 3 with numpy, scipy, pandas and matplotlib:
+
+```bash
+pip install numpy scipy pandas matplotlib
 ```
 
-Each folder has a README that says which file makes each table and figure, how to rebuild them
-from the stored results in a few seconds, how to check the code quickly, and how to rerun everything.
-
-## Quick start
+Then, from the top folder of the repository:
 
 ```bash
 cd simulations/figures
-python3 make_figures.py    # Figures 1-4 of Section 4
-python3 make_tables.py     # Tables 1-2 of Section 4
+python3 make_figures.py        # Figures 1-4
+python3 make_tables.py         # Tables 1-2
 
 cd ../../realworldexample/figures
-python3 make_tables.py     # Table 3 and the numbers of Section 5
-python3 make_figures.py    # Figures 5-7 of Section 5
+python3 make_figures.py        # Figures 5-7
+python3 make_tables.py         # Table 3 and every number in Section 5
 ```
 
-## Data policy
+These scripts read only the stored results, so they do not need MATLAB or the MovieLens data. The rebuilt figures are identical to the ones in the paper.
 
-Raw MovieLens files are not included in this repository. `realworldexample/get_data.sh`
-downloads MovieLens 25M from GroupLens (https://grouplens.org/datasets/movielens/25m/) and checks
-its MD5; see `realworldexample/README.md`.
+### Level 3: rerun the experiments
+
+| | Simulations (Section 4) | Real data (Section 5) |
+|---|---|---|
+| Software | MATLAB with the Statistics and Machine Learning Toolbox | Python 3 |
+| Data | generated by the code | MovieLens 25M, downloaded by `realworldexample/get_data.sh` (about 250 MB) |
+| Quick check | `simulations/check/` (under 2 minutes on a laptop) | `realworldexample/check/check_division.py` (about 30 seconds) |
+| Full rerun | a Slurm computing cluster, many hours | a laptop, about 25 minutes |
+
+The quick checks rerun a small part of the experiments and print `MATCH` if the result is identical to the stored one. The steps for the full reruns are in each folder's README. New results are written to a separate `output/` folder, so they never overwrite the stored results.
+
+## Data
+
+The MovieLens data are not stored in this repository. They are free to download from GroupLens at https://grouplens.org/datasets/movielens/25m/, and `realworldexample/get_data.sh` downloads them and checks that the file is complete. Please see the GroupLens README for the terms of use.
+
+## Words used in this repository
+
+| Term | Meaning |
+|---|---|
+| layer | one network; here a matrix whose rows are the shared nodes (users) and whose columns are its own items (movies) |
+| active layer | a layer with enough data to be grouped on its own; the others are non-active |
+| M | the number of groups of layers |
+| ARI | adjusted Rand index: how well two groupings agree (1 = perfectly, 0 = no better than chance) |
+| all-layer spectral clustering | groups all layers at once, large and small, with the same steps as stage 1 of Algorithm 1 |
+| UASE-based method | groups all layers at once using one shared description of the nodes estimated from all layers |
