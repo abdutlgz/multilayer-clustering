@@ -34,7 +34,7 @@ D1 = json.loads((RESULTS / 'divisions' / 'S032' / 'r001.json').read_text())
 
 
 def save(fig, name):
-    fig.savefig(FIGS / f'{name}.pdf')
+    fig.savefig(FIGS / f'{name}.pdf', metadata={'CreationDate': None})  # no date, so rebuilt PDFs are byte-identical
     fig.savefig(FIGS / f'{name}.png', dpi=200)
     plt.close(fig)
     print('wrote', FIGS / f'{name}.pdf')

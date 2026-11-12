@@ -41,7 +41,7 @@ def style(ax):
 
 
 def save(fig, name):
-    fig.savefig(f"{out}/{name}.pdf")
+    fig.savefig(f"{out}/{name}.pdf", metadata={"CreationDate": None})  # no date, so rebuilt PDFs are byte-identical
     fig.savefig(f"{out}/{name}.png", dpi=200)
     plt.close(fig)
     print("wrote", f"{out}/{name}.pdf")
